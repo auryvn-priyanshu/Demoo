@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paper Rings for Ria</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Great+Vibes&family=Quicksand:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --blush: #f6e7e6;
+      --beige: #f5f0e8;
+      --offwhite: #fffaf5;
+      --soft-gold: #e9d6b4;
+      --rose: #eac1c6;
+      --text: #5f4b43;
+      --accent: #b78e83;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Quicksand", sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, var(--offwhite), var(--beige));
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    .glow-cursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 234, 231, 0.9), rgba(255, 234, 231, 0));
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: screen;
+      filter: blur(2px);
+      z-index: 1000;
+      transition: transform 0.08s ease-out;
+    }
+
+    .section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 20px;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero {
+      background: linear-gradient(180deg, rgba(255, 250, 245, 0.95), rgba(245, 240, 232, 0.9));
+    }
+
+    .hero h1 {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(2rem, 5vw, 3.6rem);
+      font-weight: 500;
+      line-height: 1.4;
+      max-width: 680px;
+      opacity: 0;
+      animation: fadeIn 2.5s ease forwards;
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent);
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.7;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .scroll-indicator::before {
+      content: "";
+      width: 2px;
+      height: 40px;
+      background: linear-gradient(180deg, transparent, var(--accent));
+      border-radius: 2px;
+    }
+
+    .ring-section {
+      background: radial-gradient(circle at top, rgba(255, 255, 255, 0.6), rgba(245, 240, 232, 0.95));
+      overflow: hidden;
+    }
+
+    .ring-scene {
+      position: relative;
+      width: min(82vw, 480px);
+      aspect-ratio: 4 / 5;
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 40px 60px rgba(80, 60, 50, 0.15);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .ring-canvas {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.9), rgba(244, 235, 225, 0.95)),
+        linear-gradient(140deg, rgba(255, 250, 245, 0.9), rgba(230, 210, 195, 0.6));
+    }
+
+    .finger {
+      position: absolute;
+      width: 60%;
+      height: 68%;
+      left: 20%;
+      top: 15%;
+      border-radius: 70px 70px 120px 120px;
+      background: linear-gradient(160deg, #f0d6c7, #e2bca9 45%, #d7ac97 70%, #e6c1af 100%);
+      box-shadow: inset 0 -18px 24px rgba(188, 136, 119, 0.3),
+        inset 0 16px 22px rgba(255, 244, 237, 0.6),
+        0 35px 50px rgba(110, 80, 70, 0.15);
+      transform: rotate(-6deg);
+    }
+
+    .finger::before {
+      content: "";
+      position: absolute;
+      width: 66%;
+      height: 32%;
+      left: 17%;
+      top: 6%;
+      border-radius: 40px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(244, 216, 205, 0));
+      filter: blur(0.4px);
+    }
+
+    .finger::after {
+      content: "";
+      position: absolute;
+      width: 80%;
+      height: 25%;
+      left: 10%;
+      bottom: 6%;
+      border-radius: 40px;
+      background: radial-gradient(circle at 50% 30%, rgba(255, 235, 225, 0.65), rgba(210, 160, 140, 0));
+    }
+
+    .ring-band {
+      position: absolute;
+      width: 68%;
+      height: 26%;
+      left: 16%;
+      top: 40%;
+      border-radius: 50%;
+      background: linear-gradient(140deg, rgba(255, 250, 245, 0.9), rgba(215, 190, 165, 0.9)),
+        repeating-linear-gradient(90deg, rgba(232, 214, 196, 0.5), rgba(232, 214, 196, 0.5) 6px, rgba(250, 242, 236, 0.5) 6px, rgba(250, 242, 236, 0.5) 12px);
+      box-shadow: inset 0 6px 8px rgba(255, 255, 255, 0.6),
+        inset 0 -8px 10px rgba(160, 120, 95, 0.35),
+        0 16px 24px rgba(110, 80, 70, 0.25);
+      transform: rotate(-8deg);
+      filter: drop-shadow(0 6px 6px rgba(110, 80, 70, 0.25));
+    }
+
+    .ring-band::before {
+      content: "";
+      position: absolute;
+      inset: 14% 18%;
+      border-radius: 50%;
+      background: linear-gradient(160deg, rgba(255, 255, 255, 0.7), rgba(215, 190, 165, 0.4));
+      box-shadow: inset 0 2px 6px rgba(120, 90, 70, 0.3);
+    }
+
+    .ring-band::after {
+      content: "";
+      position: absolute;
+      width: 35%;
+      height: 20%;
+      left: 50%;
+      top: 10%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0));
+      transform: translateX(-50%);
+      filter: blur(1px);
+    }
+
+    .ring-shadow {
+      position: absolute;
+      width: 70%;
+      height: 18%;
+      left: 15%;
+      top: 49%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(120, 80, 70, 0.35), rgba(120, 80, 70, 0));
+      transform: rotate(-8deg);
+      filter: blur(6px);
+      opacity: 0.6;
+    }
+
+    .ring-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(4px);
+      font-family: "Great Vibes", cursive;
+      font-size: clamp(1.5rem, 4vw, 2.4rem);
+      color: var(--accent);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      text-shadow: 0 6px 14px rgba(110, 80, 70, 0.3);
+      line-height: 1.4;
+    }
+
+    .ring-scene:hover .ring-text,
+    .ring-scene:focus-within .ring-text,
+    .ring-scene.touch-active .ring-text {
+      opacity: 1;
+    }
+
+    .section h2 {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      margin-bottom: 20px;
+    }
+
+    .section p {
+      font-size: clamp(1rem, 2.7vw, 1.4rem);
+      line-height: 1.8;
+      max-width: 720px;
+      margin: 0 auto;
+      color: #6e5a52;
+    }
+
+    .why {
+      background: linear-gradient(180deg, rgba(245, 240, 232, 0.8), rgba(255, 250, 245, 0.9));
+    }
+
+    .distance {
+      background: radial-gradient(circle at bottom, rgba(255, 255, 255, 0.85), rgba(245, 240, 232, 1));
+    }
+
+    .distance-visual {
+      width: min(90vw, 700px);
+      height: 180px;
+      position: relative;
+      margin: 30px auto;
+    }
+
+    .distance-visual span {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--soft-gold);
+      animation: drift 6s ease-in-out infinite;
+      opacity: 0.7;
+    }
+
+    .distance-visual span:nth-child(odd) {
+      background: var(--rose);
+    }
+
+    .surprise {
+      background: linear-gradient(180deg, rgba(255, 250, 245, 0.95), rgba(245, 240, 232, 0.9));
+    }
+
+    .surprise button {
+      margin-top: 20px;
+      padding: 12px 28px;
+      border: none;
+      border-radius: 999px;
+      background: var(--soft-gold);
+      color: var(--text);
+      font-size: 1rem;
+      font-family: "Quicksand", sans-serif;
+      letter-spacing: 1px;
+      cursor: pointer;
+      box-shadow: 0 12px 24px rgba(120, 90, 70, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .surprise button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 30px rgba(120, 90, 70, 0.25);
+    }
+
+    .surprise-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(34, 26, 22, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+      z-index: 999;
+    }
+
+    .surprise-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .surprise-note {
+      background: var(--offwhite);
+      padding: 30px 28px;
+      border-radius: 20px;
+      max-width: 420px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
+      font-family: "Great Vibes", cursive;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      line-height: 1.6;
+      text-align: center;
+      color: var(--accent);
+    }
+
+    .ending {
+      background: linear-gradient(180deg, rgba(245, 240, 232, 0.95), rgba(255, 250, 245, 1));
+    }
+
+    .signature {
+      font-family: "Great Vibes", cursive;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      margin-top: 20px;
+      color: var(--accent);
+      white-space: pre-line;
+    }
+
+    .petals {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .petal {
+      position: absolute;
+      width: 12px;
+      height: 18px;
+      background: rgba(234, 193, 198, 0.6);
+      border-radius: 50% 50% 60% 60%;
+      animation: fall 12s linear infinite;
+      filter: blur(0.2px);
+    }
+
+    .audio-control {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(183, 142, 131, 0.3);
+      border-radius: 20px;
+      padding: 8px 14px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      z-index: 1001;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-12px);
+      }
+    }
+
+    @keyframes drift {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-10vh) translateX(0) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.7;
+      }
+      100% {
+        transform: translateY(110vh) translateX(40px) rotate(220deg);
+        opacity: 0;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .section {
+        padding: 100px 40px;
+      }
+
+      .ring-scene {
+        width: min(60vw, 520px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="glow-cursor" aria-hidden="true"></div>
+  <div class="petals" aria-hidden="true"></div>
+
+  <button class="audio-control" type="button" aria-pressed="false">Play music</button>
+  <audio id="bg-music" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/10/03/audio_2a7d9e07fb.mp3?filename=soft-piano-ambient-110078.mp3" type="audio/mpeg" />
+  </audio>
+
+  <section class="section hero" id="landing">
+    <h1>“They say paper rings don’t last…<br />but some promises don’t need gold.”</h1>
+    <div class="scroll-indicator">Scroll</div>
+  </section>
+
+  <section class="section ring-section" id="ring">
+    <h2>Paper Rings</h2>
+    <div class="ring-scene" tabindex="0">
+      <div class="ring-canvas" role="img" aria-label="A realistic finger wearing a handmade paper ring">
+        <div class="finger"></div>
+        <div class="ring-shadow"></div>
+        <div class="ring-band"></div>
+      </div>
+      <div class="ring-text">This ring isn’t real…<br />but what I feel is.</div>
+    </div>
+  </section>
+
+  <section class="section why" id="why">
+    <h2>Why Paper Rings</h2>
+    <p>“Because love isn’t measured in karats,<br />it’s measured in effort.<br /><br />Because I’d rather give you something made of intention,<br />than something made of money.”</p>
+  </section>
+
+  <section class="section distance" id="distance">
+    <h2>Distance</h2>
+    <div class="distance-visual" aria-hidden="true">
+      <span style="left: 10%; top: 30%; animation-delay: 0s;"></span>
+      <span style="left: 22%; top: 60%; animation-delay: 1s;"></span>
+      <span style="left: 35%; top: 40%; animation-delay: 2s;"></span>
+      <span style="left: 50%; top: 70%; animation-delay: 1.4s;"></span>
+      <span style="left: 62%; top: 35%; animation-delay: 0.6s;"></span>
+      <span style="left: 74%; top: 55%; animation-delay: 1.8s;"></span>
+      <span style="left: 86%; top: 25%; animation-delay: 2.4s;"></span>
+    </div>
+    <p>“Miles exist on maps,<br />not between hearts that choose each other.”</p>
+  </section>
+
+  <section class="section surprise" id="surprise">
+    <h2>Hidden Surprise</h2>
+    <p>Something soft waits for you.</p>
+    <button type="button" id="surprise-btn">Tap gently</button>
+  </section>
+
+  <section class="section ending" id="ending">
+    <h2>“Until the real ring…<br />this one is yours.”</h2>
+    <div class="signature">— Yours, always.<br />Priyanshu 🤍</div>
+  </section>
+
+  <div class="surprise-overlay" id="surprise-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="surprise-note">If I were there,<br />I’d slip this paper ring onto your finger…<br />and promise you I’m coming.</div>
+  </div>
+
+  <script>
+    const cursor = document.querySelector(".glow-cursor");
+    const petals = document.querySelector(".petals");
+    const surpriseBtn = document.getElementById("surprise-btn");
+    const surpriseOverlay = document.getElementById("surprise-overlay");
+    const ringScene = document.querySelector(".ring-scene");
+    const audioControl = document.querySelector(".audio-control");
+    const bgMusic = document.getElementById("bg-music");
+
+    window.addEventListener("mousemove", (event) => {
+      cursor.style.transform = `translate(${event.clientX}px, ${event.clientY}px)`;
+    });
+
+    const createPetal = () => {
+      const petal = document.createElement("span");
+      petal.className = "petal";
+      petal.style.left = `${Math.random() * 100}%`;
+      petal.style.animationDelay = `${Math.random() * 6}s`;
+      petal.style.animationDuration = `${10 + Math.random() * 6}s`;
+      petals.appendChild(petal);
+      setTimeout(() => petal.remove(), 16000);
+    };
+
+    for (let i = 0; i < 18; i += 1) {
+      createPetal();
+    }
+    setInterval(createPetal, 2000);
+
+    ringScene.addEventListener("touchstart", () => {
+      ringScene.classList.add("touch-active");
+    });
+    ringScene.addEventListener("touchend", () => {
+      ringScene.classList.remove("touch-active");
+    });
+
+    surpriseBtn.addEventListener("click", () => {
+      surpriseOverlay.classList.add("active");
+      surpriseOverlay.setAttribute("aria-hidden", "false");
+    });
+
+    surpriseOverlay.addEventListener("click", () => {
+      surpriseOverlay.classList.remove("active");
+      surpriseOverlay.setAttribute("aria-hidden", "true");
+    });
+
+    audioControl.addEventListener("click", async () => {
+      if (bgMusic.paused) {
+        try {
+          await bgMusic.play();
+          audioControl.textContent = "Mute music";
+          audioControl.setAttribute("aria-pressed", "true");
+        } catch (error) {
+          audioControl.textContent = "Tap to play";
+        }
+      } else {
+        bgMusic.pause();
+        audioControl.textContent = "Play music";
+        audioControl.setAttribute("aria-pressed", "false");
+      }
+    });
+  </script>
+</body>
+</html>
